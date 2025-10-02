@@ -9,30 +9,40 @@ public class HeapSort {
     private PerformanceTracker tracker = new PerformanceTracker();
 
     private void heapify(int[] arr, int n, int i) {
+        int currentRecursionDepth = 0;
         tracker.incrementRecursiveCalls();
-
-        tracker.updateRecursionDepth(i);
 
         int largest = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;
 
-        if (left < n && arr[left] > arr[largest]) {
-            largest = left;
-        }
-        tracker.incrementComparisons();
+        while (true) {
+            int newLargest = largest;
 
-        if (right < n && arr[right] > arr[largest]) {
-            largest = right;
-        }
-        tracker.incrementComparisons();
+            if (left < n && arr[left] > arr[largest]) {
+                newLargest = left;
+            }
+            tracker.incrementComparisons();
 
-        if (largest != i) {
-            int swap = arr[i];
-            arr[i] = arr[largest];
-            arr[largest] = swap;
-            tracker.incrementSwaps();
-            heapify(arr, n, largest);
+            if (right < n && arr[right] > arr[newLargest]) {
+                newLargest = right;
+            }
+            tracker.incrementComparisons();
+
+            if (newLargest != largest) {
+                int swap = arr[largest];
+                arr[largest] = arr[newLargest];
+                arr[newLargest] = swap;
+                tracker.incrementSwaps();
+
+                largest = newLargest;
+                left = 2 * largest + 1;
+                right = 2 * largest + 2;
+                currentRecursionDepth++;
+                tracker.updateRecursionDepth(currentRecursionDepth);
+            } else {
+                break;
+            }
         }
     }
 
@@ -52,14 +62,13 @@ public class HeapSort {
             heapify(arr, i, 0);
         }
 
-        tracker.stopTimer();  // Остановка таймера
+        tracker.stopTimer();
         try {
             tracker.writeMetricsToCSV("benchmark_metrics.csv", arrayName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     public void printArray(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
