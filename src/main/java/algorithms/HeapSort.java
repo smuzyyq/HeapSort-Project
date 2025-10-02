@@ -38,8 +38,6 @@ public class HeapSort {
                 largest = newLargest;
                 left = 2 * largest + 1;
                 right = 2 * largest + 2;
-                currentRecursionDepth++;
-                tracker.updateRecursionDepth(currentRecursionDepth);
             } else {
                 break;
             }
@@ -47,6 +45,11 @@ public class HeapSort {
     }
 
     public void sort(int[] arr, String arrayName) {
+
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+
         tracker.startTimer();
         int n = arr.length;
 
