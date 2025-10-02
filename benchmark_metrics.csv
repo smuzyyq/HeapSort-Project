@@ -1,8 +1,10 @@
-Comparisons,Swaps,HeapifyCalls,Time(ms)
-0,0,0,4
-Comparisons,Swaps,HeapifyCalls,Time(ms)
-0,0,0,0
-Comparisons,Swaps,HeapifyCalls,Time(ms)
-0,0,0,1
-Comparisons,Swaps,HeapifyCalls,Time(ms)
-0,0,0,11
+ArrayName,Comparisons,Swaps,MemoryAllocations,RecursiveCalls,MaxRecursionDepth,Time(ms)
+Array Size: 1000,19222,9111,0,9611,999,10
+Array Size: 5000,138358,66179,0,69179,4998,13
+Array Size: 10000,396298,190149,0,198149,9999,28
+Array Size: 50000,1921552,927776,0,960776,49998,92
+Array Size: 6,28,11,0,14,2,0
+Array Size: 1000,19100,9050,0,9550,999,7
+Array Size: 5000,138302,66151,0,69151,4998,13
+Array Size: 10000,396772,190386,0,198386,9999,28
+Array Size: 50000,1921354,927677,0,960677,49999,85

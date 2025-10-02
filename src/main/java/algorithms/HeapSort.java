@@ -9,11 +9,13 @@ public class HeapSort {
     private PerformanceTracker tracker = new PerformanceTracker();
 
     private void heapify(int[] arr, int n, int i) {
-        tracker.incrementHeapifyCalls();
+        tracker.incrementRecursiveCalls();
+
+        tracker.updateRecursionDepth(i);
+
         int largest = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;
-
 
         if (left < n && arr[left] > arr[largest]) {
             largest = left;
@@ -34,7 +36,7 @@ public class HeapSort {
         }
     }
 
-    public void sort(int[] arr) {
+    public void sort(int[] arr, String arrayName) {
         tracker.startTimer();
         int n = arr.length;
 
@@ -49,13 +51,15 @@ public class HeapSort {
             tracker.incrementSwaps();
             heapify(arr, i, 0);
         }
-        tracker.stopTimer();
+
+        tracker.stopTimer();  // Остановка таймера
         try {
-            tracker.writeMetricsToCSV("metrics.csv");
+            tracker.writeMetricsToCSV("benchmark_metrics.csv", arrayName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public void printArray(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
@@ -71,7 +75,7 @@ public class HeapSort {
         System.out.println("Original array:");
         heapSort.printArray(arr);
 
-        heapSort.sort(arr);
+        heapSort.sort(arr, "Array Size: " + arr.length);
 
         System.out.println("Sorted array:");
         heapSort.printArray(arr);

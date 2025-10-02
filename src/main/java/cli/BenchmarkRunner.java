@@ -8,17 +8,7 @@ import java.io.IOException;
 public class BenchmarkRunner {
 
     public static void main(String[] args) {
-        int[] sizes;
-
-        if (args.length > 0) {
-            sizes = new int[args.length];
-            for (int i = 0; i < args.length; i++) {
-                sizes[i] = Integer.parseInt(args[i]);
-            }
-        } else {
-            sizes = new int[]{100, 1000, 10000, 100000};
-        }
-
+        int[] sizes = {1000, 5000, 10000, 50000};
         HeapSort heapSort = new HeapSort();
         PerformanceTracker tracker = new PerformanceTracker();
 
@@ -28,13 +18,15 @@ public class BenchmarkRunner {
                 arr[i] = (int) (Math.random() * size);
             }
 
+            String arrayName = "Array Size: " + size;
+
             tracker.startTimer();
-            heapSort.sort(arr);
+            heapSort.sort(arr, arrayName);
             tracker.stopTimer();
 
             System.out.println("Array size: " + size + " | Time (ms): " + tracker.getElapsedTime());
             try {
-                tracker.writeMetricsToCSV("benchmark_metrics.csv");
+                tracker.writeMetricsToCSV("benchmark_metrics.csv", arrayName);
             } catch (IOException e) {
                 e.printStackTrace();
             }

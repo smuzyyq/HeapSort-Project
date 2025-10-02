@@ -1,5 +1,6 @@
 package metrics;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,20 +9,23 @@ public class PerformanceTracker {
 
     private long comparisons = 0;
     private long swaps = 0;
-    private long heapifyCalls = 0;
-    private long startTime;
-    private long endTime;
+    private long memoryAllocations = 0;
+    private long recursiveCalls = 0;
+    private long maxRecursionDepth = 0;
+    private long currentRecursionDepth = 0;
+    private long startTimeNs;
+    private long endTimeNs;
 
     public void startTimer() {
-        startTime = System.nanoTime();
+        startTimeNs = System.nanoTime();
     }
 
     public void stopTimer() {
-        endTime = System.nanoTime();
+        endTimeNs = System.nanoTime();
     }
 
     public long getElapsedTime() {
-        return endTime - startTime;
+        return (endTimeNs - startTimeNs) / 100000;
     }
 
     public void incrementComparisons() {
@@ -32,16 +36,37 @@ public class PerformanceTracker {
         swaps++;
     }
 
-    public void incrementHeapifyCalls() {
-        heapifyCalls++;
+    public void incrementMemoryAllocations() {
+        memoryAllocations++;
     }
 
-    public void writeMetricsToCSV(String filename) throws IOException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
-            writer.println("Comparisons,Swaps,HeapifyCalls,Time(ms)");
-            writer.println(comparisons + "," + swaps + "," + heapifyCalls + "," + getElapsedTime() / 1000000);
+    public void incrementRecursiveCalls() {
+        recursiveCalls++;
+    }
+
+    public void updateRecursionDepth(int depth) {
+        currentRecursionDepth = depth;
+        if (depth > maxRecursionDepth) {
+            maxRecursionDepth = depth;
         }
     }
+
+    public void writeMetricsToCSV(String filename, String arrayName) throws IOException {
+        File file = new File(filename);
+        boolean isNewFile = !file.exists();
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
+            if (isNewFile) {
+
+                writer.println("ArrayName,Comparisons,Swaps,MemoryAllocations,RecursiveCalls,MaxRecursionDepth,Time(ms)");
+            }
+
+
+            writer.println(arrayName + "," + comparisons + "," + swaps + "," + memoryAllocations + "," +
+                    recursiveCalls + "," + maxRecursionDepth + "," + getElapsedTime());
+        }
+    }
+
 
     public long getComparisons() {
         return comparisons;
@@ -51,7 +76,19 @@ public class PerformanceTracker {
         return swaps;
     }
 
-    public long getHeapifyCalls() {
-        return heapifyCalls;
+    public long getMemoryAllocations() {
+        return memoryAllocations;
+    }
+
+    public long getRecursiveCalls() {
+        return recursiveCalls;
+    }
+
+    public long getMaxRecursionDepth() {
+        return maxRecursionDepth;
+    }
+
+    public long getCurrentRecursionDepth() {
+        return currentRecursionDepth;
     }
 }
