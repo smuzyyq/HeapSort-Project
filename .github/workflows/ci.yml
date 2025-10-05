@@ -1,0 +1,41 @@
+name: Maven + JMH + Metrics CI
+on:
+  push: { branches: [ main ] }
+  pull_request: { branches: [ main ] }
+
+jobs:
+  build-test-bench:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build & Run Tests
+        run: mvn -q -B -DskipTests=false test
+
+      - name: Run Metrics (CLI)
+        run: |
+          mkdir -p docs
+          java -cp target/classes:target/test-classes \
+            cli.BenchmarkRunner --sizes=1000,10000 --trials=3 \
+            --dist=random --out=docs/benchmark_metrics_ci.csv
+
+      - name: Build JMH shaded jar
+        run: mvn -q -B -DskipTests=true package
+
+      - name: Run JMH
+        run: |
+          java -jar target/*-shaded.jar HeapSortBenchmark \
+            -rf csv -rff docs/jmh-results-ci.csv
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: docs/*.csv

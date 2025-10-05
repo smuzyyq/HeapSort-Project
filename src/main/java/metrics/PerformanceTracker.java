@@ -9,9 +9,7 @@ public class PerformanceTracker {
 
     private long comparisons = 0;
     private long swaps = 0;
-    private long memoryAllocations = 0;
     private long recursiveCalls = 0;
-    private long maxRecursionDepth = 0;
     private long currentRecursionDepth = 0;
     private long startTimeNs;
     private long endTimeNs;
@@ -36,20 +34,13 @@ public class PerformanceTracker {
         swaps++;
     }
 
-    public void incrementMemoryAllocations() {
-        memoryAllocations++;
-    }
+
 
     public void incrementRecursiveCalls() {
         recursiveCalls++;
     }
 
-    public void updateRecursionDepth(int depth) {
-        currentRecursionDepth = depth;
-        if (depth > maxRecursionDepth) {
-            maxRecursionDepth = depth;
-        }
-    }
+
 
     public void writeMetricsToCSV(String filename, String arrayName) throws IOException {
         File file = new File(filename);
@@ -58,12 +49,12 @@ public class PerformanceTracker {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
             if (isNewFile) {
 
-                writer.println("ArrayName,Comparisons,Swaps,MemoryAllocations,RecursiveCalls,MaxRecursionDepth,Time(ms)");
+                writer.println("ArrayName,Comparisons,Swaps,RecursiveCalls,Time(ms)");
             }
 
 
-            writer.println(arrayName + "," + comparisons + "," + swaps + "," + memoryAllocations + "," +
-                    recursiveCalls + "," + maxRecursionDepth + "," + getElapsedTime());
+            writer.println(arrayName + "," + comparisons + "," + swaps + "," +
+                    recursiveCalls  + "," + getElapsedTime());
         }
     }
 
@@ -76,17 +67,13 @@ public class PerformanceTracker {
         return swaps;
     }
 
-    public long getMemoryAllocations() {
-        return memoryAllocations;
-    }
+
 
     public long getRecursiveCalls() {
         return recursiveCalls;
     }
 
-    public long getMaxRecursionDepth() {
-        return maxRecursionDepth;
-    }
+
 
     public long getCurrentRecursionDepth() {
         return currentRecursionDepth;

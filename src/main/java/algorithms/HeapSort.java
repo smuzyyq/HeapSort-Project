@@ -9,7 +9,6 @@ public class HeapSort {
     private PerformanceTracker tracker = new PerformanceTracker();
 
     private void heapify(int[] arr, int n, int i) {
-        int currentRecursionDepth = 0;
         tracker.incrementRecursiveCalls();
 
         int largest = i;
