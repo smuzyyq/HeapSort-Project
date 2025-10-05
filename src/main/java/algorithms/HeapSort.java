@@ -1,94 +1,41 @@
+// src/main/java/algorithms/HeapSort.java
 package algorithms;
 
 import metrics.PerformanceTracker;
 
-import java.io.IOException;
+public final class HeapSort {
+    private HeapSort() {}
 
-public class HeapSort {
+    public static void sort(int[] a, PerformanceTracker t) {
+        if (a == null || a.length < 2) return;
+        int n = a.length;
 
-    private PerformanceTracker tracker = new PerformanceTracker();
+        // build max-heap
+        for (int i = n / 2 - 1; i >= 0; i--) heapify(a, n, i, t);
 
-    private void heapify(int[] arr, int n, int i) {
-        tracker.incrementHeapifyIterations();
+        // extract max
+        for (int end = n - 1; end > 0; end--) {
+            swap(a, 0, end, t);
+            heapify(a, end, 0, t);
+        }
+    }
 
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-
+    private static void heapify(int[] a, int size, int i, PerformanceTracker t) {
         while (true) {
-            int newLargest = largest;
+            int largest = i;
+            int l = 2 * i + 1, r = 2 * i + 2;
 
-            if (left < n && arr[left] > arr[largest]) {
-                newLargest = left;
-            }
-            tracker.incrementComparisons();
+            if (l < size) { t.cmp(); if (a[l] > a[largest]) largest = l; }
+            if (r < size) { t.cmp(); if (a[r] > a[largest]) largest = r; }
+            if (largest == i) return;
 
-            if (right < n && arr[right] > arr[newLargest]) {
-                newLargest = right;
-            }
-            tracker.incrementComparisons();
-
-            if (newLargest != largest) {
-                int swap = arr[largest];
-                arr[largest] = arr[newLargest];
-                arr[newLargest] = swap;
-                tracker.incrementSwaps();
-
-                largest = newLargest;
-                left = 2 * largest + 1;
-                right = 2 * largest + 2;
-            } else {
-                break;
-            }
+            swap(a, i, largest, t);
+            i = largest;
         }
     }
 
-    public void sort(int[] arr, String arrayName) {
-
-        if (arr == null || arr.length <= 1) {
-            return;
-        }
-
-        tracker.startTimer();
-        int n = arr.length;
-
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(arr, n, i);
-        }
-
-        for (int i = n - 1; i >= 0; i--) {
-            int temp = arr[0];
-            arr[0] = arr[i];
-            arr[i] = temp;
-            tracker.incrementSwaps();
-            heapify(arr, i, 0);
-        }
-
-        tracker.stopTimer();
-        try {
-            tracker.writeMetricsToCSV("benchmark_metrics.csv", arrayName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void printArray(int[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            System.out.print(arr[i] + " ");
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        HeapSort heapSort = new HeapSort();
-        int[] arr = {12, 11, 13, 5, 6, 7};
-
-        System.out.println("Original array:");
-        heapSort.printArray(arr);
-
-        heapSort.sort(arr, "Array Size: " + arr.length);
-
-        System.out.println("Sorted array:");
-        heapSort.printArray(arr);
+    private static void swap(int[] a, int i, int j, PerformanceTracker t) {
+        int tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+        t.swap();
     }
 }
