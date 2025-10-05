@@ -9,7 +9,7 @@ public class HeapSort {
     private PerformanceTracker tracker = new PerformanceTracker();
 
     private void heapify(int[] arr, int n, int i) {
-        tracker.incrementRecursiveCalls();
+        tracker.incrementHeapifyIterations();
 
         int largest = i;
         int left = 2 * i + 1;

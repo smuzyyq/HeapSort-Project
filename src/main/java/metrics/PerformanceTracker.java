@@ -9,7 +9,7 @@ public class PerformanceTracker {
 
     private long comparisons = 0;
     private long swaps = 0;
-    private long recursiveCalls = 0;
+    private long HeapifyIterations = 0;
     private long currentRecursionDepth = 0;
     private long startTimeNs;
     private long endTimeNs;
@@ -36,8 +36,8 @@ public class PerformanceTracker {
 
 
 
-    public void incrementRecursiveCalls() {
-        recursiveCalls++;
+    public void incrementHeapifyIterations() {
+        HeapifyIterations++;
     }
 
 
@@ -49,12 +49,12 @@ public class PerformanceTracker {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
             if (isNewFile) {
 
-                writer.println("ArrayName,Comparisons,Swaps,RecursiveCalls,Time(ms)");
+                writer.println("ArrayName,Comparisons,Swaps,HeapifyIterations,Time(ms)");
             }
 
 
             writer.println(arrayName + "," + comparisons + "," + swaps + "," +
-                    recursiveCalls  + "," + getElapsedTime());
+                    HeapifyIterations  + "," + getElapsedTime());
         }
     }
 
@@ -69,8 +69,8 @@ public class PerformanceTracker {
 
 
 
-    public long getRecursiveCalls() {
-        return recursiveCalls;
+    public long getHeapifyIterations() {
+        return HeapifyIterations;
     }
 
 

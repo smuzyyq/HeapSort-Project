@@ -6,7 +6,6 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import algorithms.HeapSort;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class BenchmarkRunner {
@@ -21,14 +20,7 @@ public class BenchmarkRunner {
         new Runner(opt).run();
     }
 
-    private static int[] generateRandomArray(int n) {
-        Random rand = new Random();
-        int[] arr = new int[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = rand.nextInt(1000000);
-        }
-        return arr;
-    }
+
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
