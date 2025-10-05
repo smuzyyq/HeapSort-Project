@@ -69,9 +69,7 @@ For detailed performance measurements, check the **CSV** file **`benchmark_metri
 - Array size.
 - Number of comparisons.
 - Number of swaps.
-- Memory allocations.
-- Recursive calls.
-- Max recursion depth.
+- Heapify Iterations.
 - Time in milliseconds.
 
 ---
