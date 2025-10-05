@@ -1,81 +1,38 @@
 package metrics;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
-public class PerformanceTracker {
+public final class PerformanceTracker {
+    private long comparisons, swaps, accesses, allocations;
+    private long startNs, elapsedNs;
 
-    private long comparisons = 0;
-    private long swaps = 0;
-    private long HeapifyIterations = 0;
-    private long currentRecursionDepth = 0;
-    private long startTimeNs;
-    private long endTimeNs;
+    public void start() { startNs = System.nanoTime(); }
+    public void stop()  { elapsedNs += System.nanoTime() - startNs; }
 
-    public void startTimer() {
-        startTimeNs = System.nanoTime();
-    }
+    public void cmp() { comparisons++; }
+    public void swap() { swaps++; accesses += 4; } // 2 reads + 2 writes
+    public void access(int count) { accesses += count; }
+    public void alloc(long bytes) { allocations += bytes; }
 
-    public void stopTimer() {
-        endTimeNs = System.nanoTime();
-    }
+    public long getComparisons() { return comparisons; }
+    public long getSwaps() { return swaps; }
+    public long getAccesses() { return accesses; }
+    public long getAllocations() { return allocations; }
+    public long getElapsedNs() { return elapsedNs; }
 
-    public long getElapsedTime() {
-        return (endTimeNs - startTimeNs) / 100000;
-    }
-
-    public void incrementComparisons() {
-        comparisons++;
-    }
-
-    public void incrementSwaps() {
-        swaps++;
-    }
-
-
-
-    public void incrementHeapifyIterations() {
-        HeapifyIterations++;
-    }
-
-
-
-    public void writeMetricsToCSV(String filename, String arrayName) throws IOException {
-        File file = new File(filename);
-        boolean isNewFile = !file.exists();
-
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
-            if (isNewFile) {
-
-                writer.println("ArrayName,Comparisons,Swaps,HeapifyIterations,Time(ms)");
+    public static void ensureCsvHeader(File f) throws IOException {
+        boolean newFile = f.createNewFile();
+        if (newFile || f.length() == 0) {
+            try (PrintWriter pw = new PrintWriter(new FileWriter(f, true))) {
+                pw.println("algo,input,dist,n,trial,time_ns,comparisons,swaps,accesses,alloc_bytes");
             }
-
-
-            writer.println(arrayName + "," + comparisons + "," + swaps + "," +
-                    HeapifyIterations  + "," + getElapsedTime());
         }
     }
 
-
-    public long getComparisons() {
-        return comparisons;
-    }
-
-    public long getSwaps() {
-        return swaps;
-    }
-
-
-
-    public long getHeapifyIterations() {
-        return HeapifyIterations;
-    }
-
-
-
-    public long getCurrentRecursionDepth() {
-        return currentRecursionDepth;
+    public void appendCsv(File f, String algo, String inputName, String dist, int n, int trial) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(f, true))) {
+            pw.printf("%s,%s,%s,%d,%d,%d,%d,%d,%d,%d%n",
+                    algo, inputName, dist, n, trial, elapsedNs, comparisons, swaps, accesses, allocations);
+        }
     }
 }
